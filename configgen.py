@@ -111,6 +111,32 @@ def process_files():
                     }
                 }
                 output[item_name_key] = file_data 
+    elif selected_type == "Furnitures":
+        for item in item_list.get(0, tk.END):
+            item_name_key = os.path.splitext(os.path.basename(item))[0]
+            item_name_display = item_name_key.replace("_", " ").title()
+            
+            if item.lower().endswith(".json"):
+                file_data = {
+                    "itemname": item_name_display,
+                    "material": "PAPER",
+                    "Pack": {
+                        "generate_model": False,
+                        "model": f"{item}"
+                    },
+                    "Mechanics": {
+                        "furniture":{
+                          "type": "DISPLAY_ENTITY",
+                          "drop":{
+                            "silktouch": False,
+                            "loots": [
+                                "{ oraxen_item: item_name_key, probability: 1.0 }"
+                            ]
+                          }
+                        }
+                    }
+                }
+                output[item_name_key] = file_data   
     elif selected_type == "Items(3d)":
         material = material_entry.get() or "PAPER"
         color_map = defaultdict(lambda: "0,0,0")
@@ -188,7 +214,7 @@ style.configure("TCombobox",
                 foreground="#000000", 
                 focuscolor="none")
 
-option_menu = ttk.Combobox(frame_top, textvariable=option_var, values=["Icons", "Items(2d)", "Items(3d)", "Blocks"], state="readonly", font=font_style, style="TCombobox")
+option_menu = ttk.Combobox(frame_top, textvariable=option_var, values=["Icons", "Items(2d)", "Items(3d)", "Blocks", "Furnitures"], state="readonly", font=font_style, style="TCombobox")
 option_menu.set("Icons")
 option_menu.bind("<<ComboboxSelected>>", option_selected)
 option_menu.pack(pady=5)
@@ -219,5 +245,35 @@ btn_process.pack(pady=10)
 
 output_text = tk.Text(frame_bottom, width=60, height=10, font=font_style, wrap=tk.WORD, bg="#333333", bd=1, relief="solid", highlightthickness=0, fg="white")
 output_text.pack(pady=10)
+def save_yaml_file():
+    yaml_content = output_text.get(1.0, tk.END).strip()
+    if not yaml_content:
+        messagebox.showerror("Error", "No YAML content to save.")
+        return
+    
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".yml",
+        filetypes=[("YAML files", "*.yml"), ("All files", "*.*")]
+    )
+    if file_path:
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(yaml_content)
+            messagebox.showinfo("Success", f"File saved successfully at: {file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save file: {e}")
 
+btn_save_yaml = tk.Button(
+    frame_bottom, 
+    text="Save as YAML", 
+    command=save_yaml_file, 
+    bg="#17a2b8", 
+    fg="white", 
+    font=font_style, 
+    relief="flat", 
+    width=20, 
+    bd=0, 
+    highlightthickness=0
+)
+btn_save_yaml.pack(pady=10)
 root.mainloop()
