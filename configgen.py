@@ -96,7 +96,21 @@ def process_files():
                     "color": color
                 }
                 output[item_name_key] = file_data
-
+    elif selected_type == "Blocks":
+        for item in item_list.get(0, tk.END):
+            if item.lower().endswith((".png", ".jpg", ".jpeg")):
+                item_name_key = os.path.splitext(os.path.basename(item))[0]
+                item_name_display = item_name_key.replace("_", " ").title()
+                file_data = {
+                    "displayname": item_name_display,
+                    "material": "PAPER",
+                    "Pack": {
+                      "generate_model": True,
+                      "parent_model": "block/cube_all",
+                      "textures": [f"{item}"]
+                    }
+                }
+                output[item_name_key] = file_data 
     elif selected_type == "Items(3d)":
         material = material_entry.get() or "PAPER"
         color_map = defaultdict(lambda: "0,0,0")
@@ -129,8 +143,7 @@ def process_files():
                     },
                     "color": color
                 }
-                output[item_name_key] = file_data
-            
+                output[item_name_key] = file_data     
     elif selected_type == "Icons":
         try:
             ascent_value = int(ascent_entry.get())
@@ -149,8 +162,7 @@ def process_files():
             
         except ValueError:
             messagebox.showerror("Error", "Please enter valid numbers for Ascent and Height.")
-            return
-        
+            return 
     else:
         messagebox.showinfo("Information", "Please select a valid type to process files.")
         return
