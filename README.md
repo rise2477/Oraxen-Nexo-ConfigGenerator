@@ -1,7 +1,7 @@
 
 # Nexo/Oraxen Config Generator
 
-##Why it's danger file when you download release
+## Why it's danger file when you download release
 
 - I don't know i put it to Virus Scanner and it's say nothing in there
 - but if you don't trust ece file you can download src code and run
